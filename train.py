@@ -11,7 +11,7 @@ from torch import optim
 from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 
-from utils.data_loading import BasicDataset, CarvanaDataset
+from utils.data_loading import BasicDataset, BasicDatasetRGB, CarvanaDataset
 from utils.dice_score import dice_loss
 from evaluate import evaluate
 from unet import UNet
@@ -31,10 +31,10 @@ def train_net(net,
               img_scale: float = 0.5,
               amp: bool = False):
     # 1. Create dataset
-    try:
-        dataset = CarvanaDataset(dir_img, dir_mask, img_scale)
-    except (AssertionError, RuntimeError):
-        dataset = BasicDataset(dir_img, dir_mask, img_scale)
+    #try:
+    #    dataset = CarvanaDataset(dir_img, dir_mask, img_scale)
+    #except (AssertionError, RuntimeError):
+    dataset = BasicDatasetRGB(dir_img, dir_mask, img_scale)
 
     # 2. Split into train / validation partitions
     n_val = int(len(dataset) * val_percent)
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     # Change here to adapt to your data
     # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
-    net = UNet(n_channels=3, n_classes=2, bilinear=args.bilinear)
+    net = UNet(n_channels=3, n_classes=4, bilinear=args.bilinear)
 
     logging.info(f'Network:\n'
                  f'\t{net.n_channels} input channels\n'
